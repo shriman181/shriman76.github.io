@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spandan — Intelligence Layer for Private Equity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0D1117;
+    --ink-mid: #2C3340;
+    --ink-muted: #6B7280;
+    --ink-faint: #A8B0BC;
+    --paper: #F7F5F0;
+    --paper-warm: #EFEDE6;
+    --paper-card: #FFFFFF;
+    --gold: #B8922A;
+    --gold-light: #E8D49A;
+    --gold-dim: #F4EDD6;
+    --accent: #1A3A5C;
+    --accent-mid: #2E5B8A;
+    --accent-light: #D4E4F4;
+    --border: rgba(13,17,23,0.10);
+    --border-strong: rgba(13,17,23,0.18);
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --mono: 'DM Mono', monospace;
+    --nav-h: 68px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--nav-h);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5vw;
+    background: rgba(247,245,240,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: 0 2px 24px rgba(0,0,0,0.07); }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+  }
+  .nav-logo-mark {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .nav-logo-mark svg { display: block; }
+  .nav-logo-text {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+
+  .nav-links {
+    display: flex; align-items: center; gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--ink-mid);
+    letter-spacing: 0.02em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  .nav-cta {
+    background: var(--accent) !important;
+    color: #fff !important;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 500 !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--accent-mid) !important; color: #fff !important; }
+
+  /* ── SECTIONS ── */
+  section { position: relative; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: calc(var(--nav-h) + 80px) 5vw 100px;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 80% 40%, rgba(26,58,92,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 20% 70%, rgba(184,146,42,0.05) 0%, transparent 60%);
+  }
+
+  .hero-grid-lines {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(13,17,23,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(13,17,23,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .hero-inner { position: relative; z-index: 1; max-width: 900px; }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block; width: 24px; height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 6vw, 5.2rem);
+    line-height: 1.08;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    color: var(--ink-mid);
+    max-width: 600px;
+    font-weight: 300;
+    line-height: 1.75;
+    margin-bottom: 48px;
+  }
+
+  .hero-actions {
+    display: flex; align-items: center; gap: 16px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--accent-mid); transform: translateY(-1px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink-mid);
+    padding: 13px 28px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: border-color 0.2s, color 0.2s;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-stat-row {
+    display: flex; gap: 48px;
+    margin-top: 80px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .hero-stat-num {
+    font-family: var(--serif);
+    font-size: 2.6rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .hero-stat-label {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ── PROBLEM ── */
+  #problem {
+    padding: 120px 5vw;
+    background: var(--ink);
+    color: #fff;
+  }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::before {
+    content: ''; display: block; width: 20px; height: 1px;
+    background: var(--gold);
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  .section-body {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--ink-mid);
+    max-width: 680px;
+  }
+
+  #problem .section-body { color: rgba(255,255,255,0.65); }
+  #problem .section-title { color: #fff; }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2px;
+    margin-top: 64px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .problem-item {
+    padding: 36px 32px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.2s;
+    position: relative;
+  }
+  .problem-item:hover { background: rgba(255,255,255,0.045); }
+  .problem-item-icon {
+    width: 36px; height: 36px;
+    margin-bottom: 20px;
+    color: var(--gold);
+  }
+  .problem-item h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 10px;
+    letter-spacing: 0.01em;
+  }
+  .problem-item p {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.7;
+  }
+
+  /* ── PRODUCT ── */
+  #product {
+    padding: 120px 5vw;
+    background: var(--paper-warm);
+  }
+
+  .product-lead {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    margin-bottom: 80px;
+  }
+  @media(max-width:768px) { .product-lead { grid-template-columns: 1fr; gap: 40px; } }
+
+  .product-modules {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .module-card {
+    background: var(--paper-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.25s, transform 0.2s;
+  }
+  .module-card:hover {
+    box-shadow: 0 8px 32px rgba(26,58,92,0.10);
+    transform: translateY(-2px);
+  }
+  .module-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .module-card:hover::before { opacity: 1; }
+
+  .module-number {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+  .module-title {
+    font-family: var(--serif);
+    font-size: 1.25rem;
+    color: var(--ink);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  .module-desc {
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .module-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .tag {
+    font-size: 0.7rem;
+    font-family: var(--mono);
+    letter-spacing: 0.06em;
+    padding: 3px 9px;
+    border-radius: 4px;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── HOW IT WORKS ── */
+  #how {
+    padding: 120px 5vw;
+    background: var(--paper);
+  }
+  .how-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0;
+    margin-top: 64px;
+    position: relative;
+  }
+  .how-steps::before {
+    content: '';
+    position: absolute;
+    top: 28px; left: 0; right: 0;
+    height: 1px;
+    background: var(--border-strong);
+  }
+  .how-step {
+    padding: 48px 24px 0;
+    position: relative;
+  }
+  .step-dot {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--paper-card);
+    border: 1px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    color: var(--accent);
+    margin-bottom: 24px;
+    position: relative; z-index: 1;
+  }
+  .how-step h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+    letter-spacing: 0.01em;
+  }
+  .how-step p {
+    font-size: 0.855rem;
+    color: var(--ink-muted);
+    line-height: 1.7;
+  }
+
+  /* ── METRICS DASHBOARD MOCK ── */
+  #dashboard-section {
+    padding: 60px 5vw 120px;
+    background: var(--paper);
+  }
+
+  .dashboard-mock {
+    background: var(--ink);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 40px 100px rgba(13,17,23,0.25);
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .dash-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 20px;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .dash-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .dash-inner {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 0;
+    min-height: 360px;
+  }
+  @media(max-width:600px) { .dash-inner { grid-template-columns: 1fr; } }
+
+  .dash-sidebar {
+    border-right: 1px solid rgba(255,255,255,0.06);
+    padding-right: 20px;
+  }
+  .dash-sidebar-item {
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    cursor: default;
+    margin-bottom: 2px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .dash-sidebar-item.active {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+  }
+  .dash-sidebar-item svg { flex-shrink: 0; }
+
+  .dash-main { padding-left: 24px; }
+  .dash-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media(max-width:600px) { .dash-kpi-row { grid-template-columns: repeat(2, 1fr); } }
+
+  .dash-kpi {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .dash-kpi-label {
+    font-size: 0.68rem;
+    font-family: var(--mono);
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .dash-kpi-val {
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    color: #fff;
+    line-height: 1;
+  }
+  .dash-kpi-delta {
+    font-size: 0.7rem;
+    font-family: var(--mono);
+    color: #4ADE80;
+    margin-top: 4px;
+  }
+  .dash-kpi-delta.down { color: #F87171; }
+
+  .dash-chart-area {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 16px 18px;
+    height: 140px;
+    display: flex; align-items: flex-end; gap: 6px;
+    overflow: hidden;
+  }
+  .dash-bar-item {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    background: rgba(26,58,92,0.6);
+    position: relative;
+    min-height: 4px;
+    transition: background 0.2s;
+  }
+  .dash-bar-item.highlight { background: var(--gold); }
+  .dash-bar-item:hover { background: rgba(26,58,92,0.9); }
+
+  .dash-signal-list {
+    margin-top: 12px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .dash-signal-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 7px;
+    padding: 10px 14px;
+  }
+  .signal-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .signal-dot.green { background: #4ADE80; }
+  .signal-dot.amber { background: var(--gold); }
+  .signal-dot.red { background: #F87171; }
+  .dash-signal-item p {
+    font-size: 0.77rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+  }
+  .dash-signal-item strong {
+    color: rgba(255,255,255,0.9);
+    font-weight: 500;
+  }
+  .signal-time {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.3);
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* ── FOUNDER ── */
+  #founder {
+    padding: 120px 5vw;
+    background: var(--paper-warm);
+  }
+  .founder-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 80px;
+    align-items: center;
+  }
+  @media(max-width:768px) {
+    .founder-layout { grid-template-columns: 1fr; gap: 48px; }
+  }
+  .founder-portrait-wrap {
+    position: relative;
+  }
+  .founder-portrait {
+    width: 100%;
+    aspect-ratio: 3/4;
+    border-radius: 12px;
+    background: var(--accent);
+    overflow: hidden;
+    position: relative;
+  }
+  .founder-portrait-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 40% 30%, rgba(184,146,42,0.18) 0%, transparent 70%),
+      linear-gradient(160deg, #1A3A5C 0%, #0D1117 100%);
+  }
+  .founder-initials {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif);
+    font-size: 5rem;
+    color: rgba(255,255,255,0.12);
+    letter-spacing: -0.04em;
+  }
+  .founder-portrait-accent {
+    position: absolute;
+    bottom: -16px; right: -16px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+    border: 3px solid var(--paper-warm);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .founder-name {
+    font-family: var(--serif);
+    font-size: 2.6rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .founder-role {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .founder-role::before {
+    content: ''; display: block; width: 16px; height: 1px;
+    background: var(--gold);
+  }
+  .founder-bio {
+    font-size: 1rem;
+    color: var(--ink-mid);
+    line-height: 1.85;
+    margin-bottom: 24px;
+    font-weight: 300;
+  }
+  .founder-bio + .founder-bio { margin-top: -8px; }
+
+  .founder-credentials {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-top: 32px;
+  }
+  .cred-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 0.875rem;
+    color: var(--ink-mid);
+  }
+  .cred-icon {
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ── USE CASES ── */
+  #usecases {
+    padding: 120px 5vw;
+    background: var(--paper);
+  }
+  .usecase-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 64px;
+  }
+  .usecase-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px 28px;
+    background: var(--paper-card);
+    position: relative;
+    overflow: hidden;
+  }
+  .usecase-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+  }
+  .usecase-who {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .usecase-card h3 {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    color: var(--ink);
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .usecase-card p {
+    font-size: 0.875rem;
+    color: var(--ink-muted);
+    line-height: 1.75;
+  }
+  .usecase-outcome {
+    margin-top: 20px;
+    padding: 12px 16px;
+    background: var(--gold-dim);
+    border-radius: 7px;
+    font-size: 0.82rem;
+    color: var(--accent);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* ── CTA ── */
+  #cta {
+    padding: 120px 5vw;
+    background: var(--accent);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  #cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 60% at 30% 40%, rgba(184,146,42,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 70% 60%, rgba(255,255,255,0.04) 0%, transparent 50%);
+  }
+  #cta .section-label { justify-content: center; color: var(--gold-light); }
+  #cta .section-label::before { background: var(--gold-light); }
+  #cta .section-title { color: #fff; position: relative; z-index: 1; }
+  .cta-sub {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.65);
+    max-width: 520px;
+    margin: 20px auto 48px;
+    font-weight: 300;
+    line-height: 1.75;
+    position: relative; z-index: 1;
+  }
+  .cta-actions {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    flex-wrap: wrap;
+    position: relative; z-index: 1;
+  }
+  .btn-gold {
+    background: var(--gold);
+    color: #fff;
+    padding: 14px 36px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-gold:hover { background: #a07e24; transform: translateY(-1px); }
+  .btn-outline-white {
+    background: transparent;
+    color: rgba(255,255,255,0.8);
+    padding: 13px 28px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+    display: inline-block;
+  }
+  .btn-outline-white:hover { border-color: #fff; color: #fff; }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 56px 5vw;
+    background: var(--ink);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .footer-left {}
+  .footer-logo {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .footer-tagline {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.03em;
+    max-width: 260px;
+    line-height: 1.6;
+  }
+  .footer-links {
+    display: flex; gap: 32px;
+    list-style: none;
+    flex-wrap: wrap;
+  }
+  .footer-links a {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.45);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.2);
+    margin-top: 40px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: none; }
+  .fade-up:nth-child(2) { transition-delay: 0.1s; }
+  .fade-up:nth-child(3) { transition-delay: 0.2s; }
+  .fade-up:nth-child(4) { transition-delay: 0.3s; }
+  .fade-up:nth-child(5) { transition-delay: 0.4s; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:600px) {
+    .nav-links { display: none; }
+    .hero-stat-row { gap: 28px; }
+    .how-steps::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="#hero" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 14L7 8L10 11L14 4" stroke="#B8922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="14" cy="4" r="2" fill="#B8922A"/>
+      </svg>
+    </div>
+    <span class="nav-logo-text">Spandan</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#product">Product</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#usecases">Use cases</a></li>
+    <li><a href="#founder">Founder</a></li>
+    <li><a href="#cta" class="nav-cta">Request access</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Intelligence layer for Private Equity</div>
+    <h1 class="hero-title">
+      Your portfolio deserves<br>
+      <em>better than PowerPoint.</em>
+    </h1>
+    <p class="hero-sub">
+      Spandan brings an AI-native intelligence layer to PE firms — automating portfolio benchmarking, deal signal extraction, LP reporting, and value creation tracking in one unified platform.
+    </p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary">Request early access</a>
+      <a href="#product" class="btn-ghost">See the platform →</a>
+    </div>
+    <div class="hero-stat-row">
+      <div>
+        <div class="hero-stat-num">$6T+</div>
+        <div class="hero-stat-label">PE AUM globally</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">80%</div>
+        <div class="hero-stat-label">Back-office still on spreadsheets</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">12×</div>
+        <div class="hero-stat-label">Faster LP report generation</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">Real-time</div>
+        <div class="hero-stat-label">Deal signal detection</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div style="max-width: 1140px; margin: 0 auto;">
+    <div class="section-label">The problem</div>
+    <h2 class="section-title">PE firms manage trillions.<br>Their ops run on gut and PowerPoint.</h2>
+    <p class="section-body">
+      The private equity back office hasn't changed in decades. Partners still stitch together portfolio performance from inconsistent Excel submissions, LP reports are built manually every quarter, and deal sourcing relies on relationship networks and stale databases. There is no intelligence layer.
+    </p>
+
+    <div class="problem-grid">
+      <div class="problem-item fade-up">
+        <svg class="problem-item-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="6" width="24" height="24" rx="3"/>
+          <path d="M12 18h12M12 22h8M12 14h6"/>
+        </svg>
+        <h3>No benchmarking intelligence</h3>
+        <p>Portfolio company KPIs sit in inconsistent formats. Comparing EBITDA margins across 20 portcos takes weeks, not minutes.</p>
+      </div>
+      <div class="problem-item fade-up">
+        <svg class="problem-item-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="18" r="12"/>
+          <path d="M18 10v8l5 5"/>
+        </svg>
+        <h3>Quarterly LP reports take weeks</h3>
+        <p>Associates burn two weeks per quarter assembling LP packages in PowerPoint. Every cycle. Every fund. Every LP.</p>
+      </div>
+      <div class="problem-item fade-up">
+        <svg class="problem-item-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/><circle cx="24" cy="24" r="4"/>
+          <path d="M20 16l-4 4M16 12l8 4"/>
+        </svg>
+        <h3>Deal signals are missed</h3>
+        <p>Regulatory filings, news events, and ownership shifts go undetected. Your CRM doesn't read SEC filings or parse earnings calls.</p>
+      </div>
+      <div class="problem-item fade-up">
+        <svg class="problem-item-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 28V18l8-10 8 10v10"/>
+          <path d="M14 28v-6h8v6"/>
+        </svg>
+        <h3>Value creation plans go untracked</h3>
+        <p>100-day plans live in slide decks. There's no system of record to track initiative progress or hold portcos accountable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section id="product">
+  <div style="max-width: 1140px; margin: 0 auto;">
+    <div class="product-lead">
+      <div>
+        <div class="section-label">The platform</div>
+        <h2 class="section-title">Four modules.<br>One intelligence layer.</h2>
+      </div>
+      <div style="padding-top: 8px;">
+        <p class="section-body">
+          Spandan plugs into your existing data infrastructure — portfolio company reporting, CRM, filings databases — and surfaces what matters: which portcos are underperforming vs peers, which deals need your attention today, and what your LPs need to see this quarter.
+        </p>
+      </div>
+    </div>
+
+    <div class="product-modules">
+      <div class="module-card fade-up">
+        <div class="module-number">01</div>
+        <div class="module-title">Portfolio Benchmarking</div>
+        <p class="module-desc">
+          Normalize KPIs across all portfolio companies against sector peers. Identify outliers, flag underperformance, and surface improvement levers before board reviews.
+        </p>
+        <div class="module-tags">
+          <span class="tag">EBITDA Margins</span>
+          <span class="tag">Revenue Growth</span>
+          <span class="tag">Peer Comps</span>
+          <span class="tag">IRR Attribution</span>
+        </div>
+      </div>
+
+      <div class="module-card fade-up">
+        <div class="module-number">02</div>
+        <div class="module-title">Deal Signal Engine</div>
+        <p class="module-desc">
+          Continuously monitors news feeds, SEC/SEBI filings, earnings transcripts, and ownership changes. Surfaces actionable deal signals before they reach your competitors.
+        </p>
+        <div class="module-tags">
+          <span class="tag">SEC Filings</span>
+          <span class="tag">News NLP</span>
+          <span class="tag">Ownership Shifts</span>
+          <span class="tag">Distress Signals</span>
+        </div>
+      </div>
+
+      <div class="module-card fade-up">
+        <div class="module-number">03</div>
+        <div class="module-title">Automated LP Reports</div>
+        <p class="module-desc">
+          Generate quarterly LP packages automatically from live portfolio data. Customizable templates, consistent narrative, and one-click export — in hours, not weeks.
+        </p>
+        <div class="module-tags">
+          <span class="tag">Quarterly Packs</span>
+          <span class="tag">Custom Templates</span>
+          <span class="tag">Portfolio NAV</span>
+          <span class="tag">PDF Export</span>
+        </div>
+      </div>
+
+      <div class="module-card fade-up">
+        <div class="module-number">04</div>
+        <div class="module-title">Value Creation Tracker</div>
+        <p class="module-desc">
+          Turn 100-day plans and value creation playbooks into living dashboards. Track initiative status, assign ownership, and measure impact on exit multiples in real time.
+        </p>
+        <div class="module-tags">
+          <span class="tag">100-Day Plans</span>
+          <span class="tag">Initiative Milestones</span>
+          <span class="tag">MOIC Impact</span>
+          <span class="tag">GP-Portco Sync</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div style="max-width: 1140px; margin: 0 auto;">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title" style="max-width: 560px;">From raw data to decision-ready insight in minutes.</h2>
+
+    <div class="how-steps">
+      <div class="how-step fade-up">
+        <div class="step-dot">1</div>
+        <h3>Connect your data</h3>
+        <p>Plug in portco reporting pipelines, CRM exports, and external filings sources. Spandan normalizes everything automatically.</p>
+      </div>
+      <div class="how-step fade-up">
+        <div class="step-dot">2</div>
+        <h3>AI enrichment layer</h3>
+        <p>Our models classify, score, and contextualize every data point — benchmarking against sector peers and historical fund data.</p>
+      </div>
+      <div class="how-step fade-up">
+        <div class="step-dot">3</div>
+        <h3>Signals surface</h3>
+        <p>Deal triggers, performance outliers, and LP-relevant events are flagged in your daily intelligence feed — prioritized by urgency.</p>
+      </div>
+      <div class="how-step fade-up">
+        <div class="step-dot">4</div>
+        <h3>Act and report</h3>
+        <p>Generate LP packages, update value creation plans, and route decisions — all from within one connected workspace.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD MOCKUP -->
+<section id="dashboard-section">
+  <div style="max-width: 1140px; margin: 0 auto;">
+    <p style="text-align:center; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--ink-faint); text-transform: uppercase; margin-bottom: 28px;">Platform preview</p>
+    <div class="dashboard-mock">
+      <div class="dash-bar">
+        <div class="dash-dot" style="background:#FF5F57;"></div>
+        <div class="dash-dot" style="background:#FEBC2E;"></div>
+        <div class="dash-dot" style="background:#28C840;"></div>
+        <span style="font-family: var(--mono); font-size: 0.7rem; color: rgba(255,255,255,0.25); margin-left: 10px; letter-spacing: 0.05em;">Spandan — Portfolio Intelligence</span>
+      </div>
+      <div class="dash-inner">
+        <div class="dash-sidebar">
+          <div style="font-family: var(--mono); font-size: 0.62rem; color: rgba(255,255,255,0.25); letter-spacing: 0.1em; text-transform: uppercase; padding: 0 12px 12px;">Fund III</div>
+          <div class="dash-sidebar-item active">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+            Overview
+          </div>
+          <div class="dash-sidebar-item">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12l4-5 3 3 4-6"/><circle cx="13" cy="4" r="1.5"/></svg>
+            Benchmarks
+          </div>
+          <div class="dash-sidebar-item">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+            Deal Signals
+          </div>
+          <div class="dash-sidebar-item">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M3 8h7M3 12h5"/></svg>
+            LP Reports
+          </div>
+          <div class="dash-sidebar-item">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v12M4 6l4-4 4 4"/><path d="M5 10h6"/></svg>
+            Value Plans
+          </div>
+        </div>
+        <div class="dash-main">
+          <div class="dash-kpi-row">
+            <div class="dash-kpi">
+              <div class="dash-kpi-label">Portfolio MOIC</div>
+              <div class="dash-kpi-val">2.4×</div>
+              <div class="dash-kpi-delta">↑ +0.2× QoQ</div>
+            </div>
+            <div class="dash-kpi">
+              <div class="dash-kpi-label">Avg EBITDA Margin</div>
+              <div class="dash-kpi-val">28%</div>
+              <div class="dash-kpi-delta">↑ +3.1pp vs peers</div>
+            </div>
+            <div class="dash-kpi">
+              <div class="dash-kpi-label">Deal Signals Today</div>
+              <div class="dash-kpi-val">7</div>
+              <div class="dash-kpi-delta down">2 require action</div>
+            </div>
+            <div class="dash-kpi">
+              <div class="dash-kpi-label">LP Report Status</div>
+              <div class="dash-kpi-val">Q2</div>
+              <div class="dash-kpi-delta">Draft ready</div>
+            </div>
+          </div>
+
+          <div class="dash-chart-area">
+            <div class="dash-bar-item" style="height:35%"></div>
+            <div class="dash-bar-item" style="height:55%"></div>
+            <div class="dash-bar-item" style="height:45%"></div>
+            <div class="dash-bar-item" style="height:70%"></div>
+            <div class="dash-bar-item" style="height:60%"></div>
+            <div class="dash-bar-item" style="height:80%"></div>
+            <div class="dash-bar-item highlight" style="height:88%"></div>
+            <div class="dash-bar-item" style="height:72%"></div>
+            <div class="dash-bar-item" style="height:65%"></div>
+            <div class="dash-bar-item" style="height:78%"></div>
+            <div class="dash-bar-item" style="height:82%"></div>
+            <div class="dash-bar-item" style="height:90%"></div>
+          </div>
+
+          <div class="dash-signal-list">
+            <div class="dash-signal-item">
+              <div class="signal-dot green"></div>
+              <p><strong>PortCo Delta Systems</strong> — EBITDA margin 340bps above sector median. Exit readiness score elevated.</p>
+              <span class="signal-time">2h ago</span>
+            </div>
+            <div class="dash-signal-item">
+              <div class="signal-dot amber"></div>
+              <p><strong>SEC Form 13D</strong> — activist filing detected in adjacent vertical. <strong>Potential carve-out opportunity.</strong></p>
+              <span class="signal-time">4h ago</span>
+            </div>
+            <div class="dash-signal-item">
+              <div class="signal-dot red"></div>
+              <p><strong>PortCo Meridian Retail</strong> — Revenue 18% below Q2 plan. Value creation initiative #4 at risk.</p>
+              <span class="signal-time">6h ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section id="usecases">
+  <div style="max-width: 1140px; margin: 0 auto;">
+    <div class="section-label">Use cases</div>
+    <h2 class="section-title" style="max-width: 560px;">Built for every layer<br>of the PE firm.</h2>
+
+    <div class="usecase-grid">
+      <div class="usecase-card fade-up">
+        <div class="usecase-who">For Partners</div>
+        <h3>Portfolio review in 10 minutes, not 2 days</h3>
+        <p>Walk into every board meeting with automatically synthesized portco performance against plan, peers, and prior quarters — without chasing associates for data.</p>
+        <div class="usecase-outcome">↑ Partner leverage — 3× more portfolio oversight, same headcount</div>
+      </div>
+      <div class="usecase-card fade-up">
+        <div class="usecase-who">For Deal Teams</div>
+        <h3>Surface proprietary deal flow before the market does</h3>
+        <p>Daily signal feeds from filings, press, and alternative data sources flag ownership changes, distress indicators, and sector dislocation — before your competition calls the banker.</p>
+        <div class="usecase-outcome">↑ Deal conversion — proprietary sourcing reduces process competition</div>
+      </div>
+      <div class="usecase-card fade-up">
+        <div class="usecase-who">For IR &amp; Operations</div>
+        <h3>LP quarterly reports in hours, not weeks</h3>
+        <p>Spandan auto-generates fund and portfolio summaries directly from live data. Compliance-ready, brand-consistent, and customizable per LP preference.</p>
+        <div class="usecase-outcome">↓ 12× reduction in LP report production time</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section id="founder">
+  <div style="max-width: 1140px; margin: 0 auto;">
+    <div class="section-label">The founder</div>
+    <div class="founder-layout">
+      <div class="founder-portrait-wrap">
+        <div class="founder-portrait">
+          <div class="founder-portrait-bg"></div>
+          <div class="founder-initials">SR</div>
+        </div>
+        <div class="founder-portrait-accent">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <path d="M6 24L12 14L17 19L24 8" stroke="#B8922A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="24" cy="8" r="3" fill="#B8922A"/>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <h2 class="founder-name">Sanhik Roy</h2>
+        <div class="founder-role">Founder &amp; CEO, Spandan</div>
+        <p class="founder-bio">
+          Sanhik built Spandan from a simple observation: private equity firms making billion-dollar decisions about portfolio companies routinely operate with less data visibility than a mid-size SaaS company has about its own growth metrics.
+        </p>
+        <p class="founder-bio" style="margin-top: 16px;">
+          With deep exposure to PE back-office operations and a background bridging financial services and applied AI, Sanhik is building the intelligence layer the industry has needed for two decades — starting with the four most painful points in the PE workflow: benchmarking, deal sourcing, LP reporting, and value creation tracking.
+        </p>
+        <div class="founder-credentials">
+          <div class="cred-item">
+            <svg class="cred-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M2 12l4-5 3 3 4-6"/>
+            </svg>
+            Deep operational exposure to PE fund reporting workflows and portfolio monitoring infrastructure
+          </div>
+          <div class="cred-item">
+            <svg class="cred-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M2 12l4-5 3 3 4-6"/>
+            </svg>
+            Built AI-native data pipelines for financial signal extraction at scale across regulatory filings
+          </div>
+          <div class="cred-item">
+            <svg class="cred-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M2 12l4-5 3 3 4-6"/>
+            </svg>
+            Advised PE and family office clients on operational data strategy and reporting modernization
+          </div>
+          <div class="cred-item">
+            <svg class="cred-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M2 12l4-5 3 3 4-6"/>
+            </svg>
+            Believer that the next generation of PE outperformance will be won in the operations layer, not the deal room
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="section-label">Get started</div>
+  <h2 class="section-title" style="max-width: 600px; margin: 0 auto 20px;">Ready to give your portfolio<br>an intelligence layer?</h2>
+  <p class="cta-sub">Spandan is currently in private beta with a select group of mid-market PE firms. Join the waitlist or schedule a conversation with Sanhik.</p>
+  <div class="cta-actions">
+    <a href="mailto:hello@spandan.ai" class="btn-gold">Request access</a>
+    <a href="mailto:hello@spandan.ai" class="btn-outline-white">Schedule a call</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <div class="footer-logo">Spandan</div>
+    <p class="footer-tagline">The AI intelligence layer for private equity operations and portfolio intelligence.</p>
+    <p class="footer-copy">© 2025 Spandan. All rights reserved.</p>
+  </div>
+  <ul class="footer-links">
+    <li><a href="#product">Platform</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#usecases">Use cases</a></li>
+    <li><a href="#founder">Founder</a></li>
+    <li><a href="mailto:hello@spandan.ai">Contact</a></li>
+  </ul>
+</footer>
+
+<script>
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
